@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Not a Robot Verification</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .green{
+      color:green;
+      font-size: large;
+      font-weight: bolder;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+    .red {
+      color: red;
+      font-size: large;
+      font-weight: bolder;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+    }
+    #imageContainer {
+      display: grid;
+      grid-template-columns: repeat(3,150px);
+    }
+    #imageContainer img {
+      width: 150px; 
+      height: 90px;
+      margin: 5px; 
+    }
+  </style>
+</head>
+<body>
+  <h3 id="h">Please click on the identical tiles to verify that you are not a robot.</h3>
+  <div id="imageContainer">
+  </div>
+  <button id="reset" class="hidden" onclick="reset()">Reset</button>
+  <button id="verify" class="hidden" onclick="verify()">Verify</button>
+  <p id="para" class="hidden"></p>
+
+  <script>
+    const images = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img7.jpg', 'img3.jpg'];
+    const imageContainer = document.getElementById('imageContainer');
+    let selectedImages = [];
+    let verifyBtnClicked = 0;
+    
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function renderImages() {
+      imageContainer.innerHTML = '';
+      shuffle(images);
+      images.forEach((image, index) => {
+        const img = document.createElement('img');
+        img.src = image;
+        img.classList.add(`img${index + 1}`);
+        img.onclick = () => selectImage(image, img);
+        imageContainer.appendChild(img);
+      });
+    }
+
+    function selectImage(image, imgElement) {
+      if (selectedImages.length < 2 && !verifyBtnClicked) {
+        selectedImages.push({ image, element: imgElement });
+        imgElement.classList.add('selected');
+        if (selectedImages.length === 2) {
+          document.getElementById('verify').classList.remove('hidden');
+        }
+      } else {
+        document.getElementById('para').innerText = 'select two images.';
+        document.getElementById('para').classList.add('red');
+      }
+    }
+
+    function verify() {
+      verifyBtnClicked = true;
+      setTimeout(() => {
+        if (selectedImages[0].image === selectedImages[1].image) {
+          document.getElementById('para').innerText = 'Congrats Broo! U can Enter😎';
+          document.getElementById('para').classList.add('green');
+        } else {
+          document.getElementById('para').innerText = 'You selected the Diff images.';
+          document.getElementById('para').classList.add('red');
+        }
+        document.getElementById('verify').classList.add('hidden');
+        document.getElementById('para').classList.remove('hidden');
+      },500);
+    }
+
+    function reset() {
+      selectedImages.forEach(({ element }) => {
+        element.classList.remove('selected');
+      });
+      selectedImages = [];
+      verifyButtonClicked = false;
+      document.getElementById('verify').classList.add('hidden');
+      document.getElementById('reset').classList.add('hidden');
+      document.getElementById('para').classList.add('hidden');
+      document.getElementById('para').classList.remove('red');
+    }
+
+    renderImages();
+  </script>
+</body>
+</html>
